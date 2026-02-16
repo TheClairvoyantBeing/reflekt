@@ -2,36 +2,69 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const ThemeContext = createContext()
 
+const FONTS = {
+  inter: { name: 'Inter', family: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' },
+  sora: { name: 'Sora', family: '"Sora", -apple-system, sans-serif' },
+  'space-grotesk': { name: 'Space Grotesk', family: '"Space Grotesk", -apple-system, sans-serif' },
+  outfit: { name: 'Outfit', family: '"Outfit", -apple-system, sans-serif' },
+}
+
+const DEFAULTS = {
+  theme: 'dark',
+  aesthetic: 'minimalist',
+  font: 'inter',
+}
+
 /**
- * Provides theme state and toggle function to the app.
- * Persists preference in localStorage.
- * Applies `data-theme` attribute on <html> for CSS to react to.
+ * Provides theme, aesthetic, and font state to the app.
+ * All preferences persist in localStorage.
  */
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('reflekt-theme')
-    return saved || 'dark'
-  })
+  const [theme, setTheme] = useState(() =>
+    localStorage.getItem('reflekt-theme') || DEFAULTS.theme
+  )
+  const [aesthetic, setAesthetic] = useState(() =>
+    localStorage.getItem('reflekt-aesthetic') || DEFAULTS.aesthetic
+  )
+  const [font, setFont] = useState(() =>
+    localStorage.getItem('reflekt-font') || DEFAULTS.font
+  )
 
+  // Apply all preferences to <html> element
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('reflekt-theme', theme)
-  }, [theme])
+    const html = document.documentElement
+    html.setAttribute('data-theme', theme)
+    html.setAttribute('data-aesthetic', aesthetic)
+    html.style.setProperty('--font-family', FONTS[font]?.family || FONTS.inter.family)
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
-  }
+    localStorage.setItem('reflekt-theme', theme)
+    localStorage.setItem('reflekt-aesthetic', aesthetic)
+    localStorage.setItem('reflekt-font', font)
+  }, [theme, aesthetic, font])
+
+  const toggleTheme = () => setTheme((p) => (p === 'dark' ? 'light' : 'dark'))
+  const setThemeMode = (mode) => setTheme(mode)
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        aesthetic,
+        font,
+        toggleTheme,
+        setThemeMode,
+        setAesthetic,
+        setFont,
+        fonts: FONTS,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   )
 }
 
 /**
- * Hook to access theme state and toggle.
- * @returns {{ theme: 'dark' | 'light', toggleTheme: () => void }}
+ * Hook to access theme, aesthetic, font, and their setters.
  */
 export function useTheme() {
   const ctx = useContext(ThemeContext)

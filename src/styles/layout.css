@@ -19,10 +19,10 @@
   height: var(--navbar-height);
   padding: 0 var(--space-8);
   background: var(--navbar-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border);
-  transition: background var(--transition-slow);
+  transition: background var(--transition-slow), border-color var(--transition-slow);
 }
 
 .nav-brand {
@@ -61,12 +61,12 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: 2px;
 }
 
 .nav-link {
   position: relative;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-muted);
@@ -82,7 +82,7 @@
 
 .nav-link.active {
   color: var(--color-primary-hover);
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--color-primary-subtle);
 }
 
 .nav-user {
@@ -92,9 +92,9 @@
 }
 
 .user-email {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-dim);
-  max-width: 180px;
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -111,26 +111,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: var(--color-surface);
+  width: 34px;
+  height: 34px;
+  background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   cursor: pointer;
-  font-size: var(--font-size-base);
+  font-size: 14px;
   transition: all var(--transition-fast);
 }
 
 .theme-btn:hover {
   border-color: var(--color-primary);
-  background: rgba(99, 102, 241, 0.1);
-  transform: rotate(15deg);
+  background: var(--color-primary-subtle);
+  transform: rotate(20deg) scale(1.05);
 }
 
 .btn-logout {
-  padding: var(--space-2) var(--space-4);
+  padding: 6px var(--space-3);
   background: transparent;
-  color: var(--color-text-muted);
+  color: var(--color-text-dim);
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
   font-weight: 500;
@@ -151,14 +151,18 @@
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   padding: 6px;
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+}
+
+.hamburger:hover {
+  border-color: var(--color-border-hover);
 }
 
 .hamburger span {
@@ -168,6 +172,7 @@
   background: var(--color-text-muted);
   border-radius: 1px;
   transition: all var(--transition-base);
+  transform-origin: center;
 }
 
 .hamburger.open span:nth-child(1) {
@@ -193,7 +198,7 @@
 
 /* Footer */
 .app-footer {
-  padding: var(--space-8);
+  padding: var(--space-6);
   text-align: center;
   color: var(--color-text-dim);
   font-size: var(--font-size-xs);
@@ -226,13 +231,13 @@
 
   .nav-menu.show {
     display: flex;
-    animation: slideDown 0.3s ease;
+    animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .nav-links {
     flex-direction: column;
     width: 100%;
-    gap: var(--space-1);
+    gap: 2px;
   }
 
   .nav-link {
