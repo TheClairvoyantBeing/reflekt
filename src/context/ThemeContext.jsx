@@ -7,6 +7,10 @@ const FONTS = {
   sora: { name: 'Sora', family: '"Sora", -apple-system, sans-serif' },
   'space-grotesk': { name: 'Space Grotesk', family: '"Space Grotesk", -apple-system, sans-serif' },
   outfit: { name: 'Outfit', family: '"Outfit", -apple-system, sans-serif' },
+  lexend: { name: 'Lexend', family: '"Lexend", -apple-system, sans-serif' },
+  'dm-sans': { name: 'DM Sans', family: '"DM Sans", -apple-system, sans-serif' },
+  'plus-jakarta': { name: 'Plus Jakarta Sans', family: '"Plus Jakarta Sans", -apple-system, sans-serif' },
+  nunito: { name: 'Nunito', family: '"Nunito", -apple-system, sans-serif' },
 }
 
 const DEFAULTS = {
