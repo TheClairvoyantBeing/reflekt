@@ -1,70 +1,136 @@
-# Getting Started with Create React App
+# ◆ Reflekt
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A beautifully crafted personal diary and journaling app with Supabase cloud sync.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?logo=supabase&logoColor=white)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Secure Authentication** — Sign up / sign in via Supabase Auth (email + password)
+- **Create Entries** — Write journal entries with title and content
+- **Browse & Delete** — View all past entries, delete ones you no longer want
+- **Cloud Sync** — Entries are stored in Supabase and accessible from any device
+- **Row Level Security** — Your entries are private; only you can access them
+- **Premium Dark UI** — Glassmorphism, gradient accents, smooth micro-animations
+- **Responsive** — Works on desktop, tablet, and mobile
+- **Real-time Word Count** — See your word count as you write
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Layer         | Technology                         |
+| ------------- | ---------------------------------- |
+| Frontend      | React 18, React Router 7           |
+| Build Tool    | Vite 6                             |
+| Backend/DB    | Supabase (PostgreSQL + Auth + RLS) |
+| Styling       | Vanilla CSS with custom properties |
+| Notifications | react-hot-toast                    |
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Getting Started
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Prerequisites
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- [Node.js](https://nodejs.org/) 18+
+- A free [Supabase](https://supabase.com) account
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+# Clone the repo
+git clone https://github.com/TheClairvoyantBeing/reflekt.git
+cd reflekt
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Install dependencies
+npm install
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Set up Supabase (interactive)
+npm run setup
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Start the dev server
+npm run dev
+```
 
-## Learn More
+The app will open at [http://localhost:3000](http://localhost:3000).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Supabase Setup
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for detailed instructions on:
 
-### Code Splitting
+- Creating a Supabase project
+- Running the database migration
+- Configuring authentication
+- Connecting the app
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+reflekt/
+├── scripts/
+│   └── setup-supabase.mjs    # Interactive Supabase setup CLI
+├── src/
+│   ├── components/
+│   │   ├── Layout.jsx         # App shell with navbar
+│   │   ├── ProtectedRoute.jsx # Auth guard
+│   │   └── EntryCard.jsx      # Reusable entry display card
+│   ├── lib/
+│   │   ├── supabase.js        # Supabase client initialization
+│   │   └── entries.js         # Entry CRUD operations
+│   ├── pages/
+│   │   ├── LoginPage.jsx      # Login / Sign up
+│   │   ├── DashboardPage.jsx  # Home dashboard
+│   │   ├── NewEntryPage.jsx   # Create new entry
+│   │   └── EntriesPage.jsx    # Browse all entries
+│   ├── styles/
+│   │   ├── globals.css        # Design tokens, reset, shared components
+│   │   ├── layout.css         # Navbar and app shell
+│   │   ├── login.css          # Login page
+│   │   ├── dashboard.css      # Dashboard page
+│   │   ├── entry.css          # New entry page
+│   │   └── entries.css        # Entries list page
+│   ├── App.jsx                # Router and auth state
+│   └── main.jsx               # Entry point
+├── .env.example               # Environment variable template
+├── index.html                 # Vite HTML entry
+├── package.json
+├── vite.config.js
+├── SUPABASE_SETUP.md          # Supabase setup guide
+└── README.md
+```
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Scripts
 
-### Advanced Configuration
+| Command           | Description                |
+| ----------------- | -------------------------- |
+| `npm run dev`     | Start development server   |
+| `npm run build`   | Build for production       |
+| `npm run preview` | Preview production build   |
+| `npm run setup`   | Interactive Supabase setup |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Renaming the Repo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+If you forked or cloned this and want to rename it:
 
-### `npm run build` fails to minify
+1. **GitHub**: Go to [repo settings](https://github.com/TheClairvoyantBeing/fsd_project/settings) → **General → Repository name** → change to `reflekt`
+2. **Local**: Update the remote URL:
+   ```bash
+   git remote set-url origin https://github.com/TheClairvoyantBeing/reflekt.git
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## License
+
+MIT — feel free to use, modify, and share.

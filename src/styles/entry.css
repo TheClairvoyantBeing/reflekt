@@ -1,0 +1,66 @@
+/* ============================================
+   New Entry Page
+   ============================================ */
+
+.new-entry-page {
+  padding: var(--space-8) 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.entry-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+}
+
+.entry-header h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.word-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.entry-form textarea {
+  min-height: 300px;
+  resize: vertical;
+  line-height: 1.8;
+  font-size: var(--font-size-base);
+}
+
+.entry-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .entry-header {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .entry-actions {
+    flex-direction: column-reverse;
+  }
+
+  .entry-actions .btn-primary,
+  .entry-actions .btn-secondary {
+    width: 100%;
+  }
+}
