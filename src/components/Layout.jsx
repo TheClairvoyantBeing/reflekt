@@ -1,22 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import supabase from '../lib/supabase'
+import { auth } from '../lib/firebase'
+import { signOut } from 'firebase/auth'
+import { useTheme } from '../context/ThemeContext'
 import '../styles/layout.css'
 
-/**
- * App shell layout with responsive navigation bar.
- * Wraps all authenticated pages.
- */
 export default function Layout({ children, user }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await signOut(auth)
     navigate('/login')
   }
 
   const isActive = (path) => location.pathname === path
+
+  const closeMenu = () => setMenuOpen(false)
 
   return (
     <div className="layout">
@@ -26,32 +28,61 @@ export default function Layout({ children, user }) {
           Reflekt
         </Link>
 
-        <div className="nav-links">
-          <Link
-            to="/dashboard"
-            className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/new-entry"
-            className={`nav-link ${isActive('/new-entry') ? 'active' : ''}`}
-          >
-            New Entry
-          </Link>
-          <Link
-            to="/entries"
-            className={`nav-link ${isActive('/entries') ? 'active' : ''}`}
-          >
-            My Entries
-          </Link>
-        </div>
+        {/* Hamburger button (mobile only) */}
+        <button
+          className={`hamburger ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-        <div className="nav-user">
-          <span className="user-email">{user?.email}</span>
-          <button onClick={handleLogout} className="btn-logout">
-            Sign Out
-          </button>
+        {/* Navigation links */}
+        <div className={`nav-menu ${menuOpen ? 'show' : ''}`}>
+          <div className="nav-links">
+            <Link
+              to="/dashboard"
+              className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/new-entry"
+              className={`nav-link ${isActive('/new-entry') ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              New Entry
+            </Link>
+            <Link
+              to="/entries"
+              className={`nav-link ${isActive('/entries') ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              My Entries
+            </Link>
+            <Link
+              to="/profile"
+              className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              Profile
+            </Link>
+          </div>
+
+          <div className="nav-user">
+            <button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+            <Link to="/profile" className="user-email" onClick={closeMenu}>
+              {user?.email}
+            </Link>
+            <button onClick={() => { handleLogout(); closeMenu() }} className="btn-logout">
+              Sign Out
+            </button>
+          </div>
         </div>
       </nav>
 

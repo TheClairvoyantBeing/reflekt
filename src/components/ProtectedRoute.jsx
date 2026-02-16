@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom'
 
 /**
  * Route guard that redirects unauthenticated users to /login.
- * Wraps child routes in App.jsx.
+ * Works with Firebase Auth user object.
  */
 export default function ProtectedRoute({ user, loading, children }) {
   if (loading) {

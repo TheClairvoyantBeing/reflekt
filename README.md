@@ -1,35 +1,38 @@
 # ◆ Reflekt
 
-A beautifully crafted personal diary and journaling app with Supabase cloud sync.
+A beautifully crafted personal diary and journaling app with Firebase cloud sync, dark/light theme, and a premium UI.
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?logo=supabase&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-Auth%20%26%20Firestore-FFCA28?logo=firebase&logoColor=black)
 
 ---
 
 ## Features
 
-- **Secure Authentication** — Sign up / sign in via Supabase Auth (email + password)
-- **Create Entries** — Write journal entries with title and content
-- **Browse & Delete** — View all past entries, delete ones you no longer want
-- **Cloud Sync** — Entries are stored in Supabase and accessible from any device
-- **Row Level Security** — Your entries are private; only you can access them
-- **Premium Dark UI** — Glassmorphism, gradient accents, smooth micro-animations
-- **Responsive** — Works on desktop, tablet, and mobile
-- **Real-time Word Count** — See your word count as you write
+- **🔒 Secure Authentication** — Email/password via Firebase Auth
+- **📝 Create Entries** — Write journal entries with real-time word count
+- **📖 Browse & Search** — Search entries by title or content, with staggered animations
+- **🗑️ Delete Entries** — Remove entries with confirmation dialog
+- **🌗 Dark / Light Mode** — Toggle between themes, persisted in localStorage
+- **👤 Profile & Settings** — View account info, change password, delete account
+- **☁️ Cloud Sync** — Entries stored in Firestore, accessible from any device
+- **🔐 Security Rules** — Firestore rules ensure only your entries are visible
+- **📱 Responsive** — Mobile hamburger menu, works on all screen sizes
+- **✨ Premium UI** — Glassmorphism, gradient accents, micro-animations
 
 ---
 
 ## Tech Stack
 
-| Layer         | Technology                         |
-| ------------- | ---------------------------------- |
-| Frontend      | React 18, React Router 7           |
-| Build Tool    | Vite 6                             |
-| Backend/DB    | Supabase (PostgreSQL + Auth + RLS) |
-| Styling       | Vanilla CSS with custom properties |
-| Notifications | react-hot-toast                    |
+| Layer         | Technology                                      |
+| ------------- | ----------------------------------------------- |
+| Frontend      | React 18, React Router 7                        |
+| Build Tool    | Vite 6                                          |
+| Auth          | Firebase Authentication                         |
+| Database      | Cloud Firestore                                 |
+| Styling       | Vanilla CSS + custom properties (design tokens) |
+| Notifications | react-hot-toast                                 |
 
 ---
 
@@ -38,35 +41,79 @@ A beautifully crafted personal diary and journaling app with Supabase cloud sync
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) 18+
-- A free [Supabase](https://supabase.com) account
+- A free [Firebase](https://firebase.google.com) account
 
-### Installation
+### Quick Start
 
 ```bash
-# Clone the repo
+# 1. Clone the repo
 git clone https://github.com/TheClairvoyantBeing/reflekt.git
 cd reflekt
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Set up Supabase (interactive)
+# 3. Set up Firebase (interactive — prompts for your config)
 npm run setup
 
-# Start the dev server
+# 4. Start the dev server
 npm run dev
 ```
 
-The app will open at [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) and sign up!
 
-### Supabase Setup
+---
 
-See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for detailed instructions on:
+## Firebase Setup (for contributors / forks)
 
-- Creating a Supabase project
-- Running the database migration
-- Configuring authentication
-- Connecting the app
+If you're setting up this project from scratch, you need a Firebase project:
+
+### 1. Create Project
+
+Go to [Firebase Console](https://console.firebase.google.com) → **Add project** → name it `reflekt`
+
+### 2. Add Web App
+
+Click the web icon (`</>`) → Register as `reflekt-web` → Copy the config object
+
+### 3. Enable Auth
+
+**Authentication** → **Get started** → **Email/Password** → Enable → Save
+
+### 4. Create Firestore
+
+**Firestore Database** → **Create database** → **Production mode** → Pick location → Done
+
+### 5. Set Security Rules
+
+**Firestore → Rules** → Replace with:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /entries/{entryId} {
+      allow read, update, delete: if request.auth != null
+                                  && resource.data.user_id == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.user_id == request.auth.uid;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+
+### 6. Run Setup Script
+
+```bash
+npm run setup
+```
+
+Paste your Firebase config values when prompted. This writes the `.env` file.
+
+> See **[FIREBASE_SETUP.md](./FIREBASE_SETUP.md)** for detailed instructions with screenshots.
 
 ---
 
@@ -75,34 +122,30 @@ See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for detailed instructions on:
 ```
 reflekt/
 ├── scripts/
-│   └── setup-supabase.mjs    # Interactive Supabase setup CLI
+│   └── setup-firebase.mjs      # Interactive Firebase setup CLI
 ├── src/
 │   ├── components/
-│   │   ├── Layout.jsx         # App shell with navbar
-│   │   ├── ProtectedRoute.jsx # Auth guard
-│   │   └── EntryCard.jsx      # Reusable entry display card
+│   │   ├── Layout.jsx          # App shell (navbar, hamburger, theme toggle)
+│   │   ├── ProtectedRoute.jsx  # Auth guard
+│   │   └── EntryCard.jsx       # Reusable entry card
+│   ├── context/
+│   │   └── ThemeContext.jsx    # Dark/Light mode context + hook
 │   ├── lib/
-│   │   ├── supabase.js        # Supabase client initialization
-│   │   └── entries.js         # Entry CRUD operations
+│   │   ├── firebase.js         # Firebase client init
+│   │   └── entries.js          # Entry CRUD (Firestore)
 │   ├── pages/
-│   │   ├── LoginPage.jsx      # Login / Sign up
-│   │   ├── DashboardPage.jsx  # Home dashboard
-│   │   ├── NewEntryPage.jsx   # Create new entry
-│   │   └── EntriesPage.jsx    # Browse all entries
-│   ├── styles/
-│   │   ├── globals.css        # Design tokens, reset, shared components
-│   │   ├── layout.css         # Navbar and app shell
-│   │   ├── login.css          # Login page
-│   │   ├── dashboard.css      # Dashboard page
-│   │   ├── entry.css          # New entry page
-│   │   └── entries.css        # Entries list page
-│   ├── App.jsx                # Router and auth state
-│   └── main.jsx               # Entry point
-├── .env.example               # Environment variable template
-├── index.html                 # Vite HTML entry
-├── package.json
-├── vite.config.js
-├── SUPABASE_SETUP.md          # Supabase setup guide
+│   │   ├── LoginPage.jsx       # Login / Sign up
+│   │   ├── DashboardPage.jsx   # Dashboard with stats & quotes
+│   │   ├── NewEntryPage.jsx    # Compose new entry
+│   │   ├── EntriesPage.jsx     # Browse & search entries
+│   │   └── ProfilePage.jsx     # Profile, settings, danger zone
+│   ├── styles/                  # One CSS file per page + globals
+│   ├── App.jsx                  # Router, auth, ThemeProvider
+│   └── main.jsx                 # React 18 entry point
+├── .env.example                 # Env var template (safe to commit)
+├── .gitignore                   # Excludes .env, node_modules, dist
+├── FIREBASE_SETUP.md            # Detailed Firebase guide
+├── CONTRIBUTING.md              # Developer guide
 └── README.md
 ```
 
@@ -110,24 +153,24 @@ reflekt/
 
 ## Scripts
 
-| Command           | Description                |
-| ----------------- | -------------------------- |
-| `npm run dev`     | Start development server   |
-| `npm run build`   | Build for production       |
-| `npm run preview` | Preview production build   |
-| `npm run setup`   | Interactive Supabase setup |
+| Command           | Description                           |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Start development server (port 3000)  |
+| `npm run build`   | Build for production                  |
+| `npm run preview` | Preview production build              |
+| `npm run setup`   | Interactive Firebase credential setup |
 
 ---
 
-## Renaming the Repo
+## What NOT to Commit
 
-If you forked or cloned this and want to rename it:
+The `.gitignore` ensures these are excluded:
 
-1. **GitHub**: Go to [repo settings](https://github.com/TheClairvoyantBeing/fsd_project/settings) → **General → Repository name** → change to `reflekt`
-2. **Local**: Update the remote URL:
-   ```bash
-   git remote set-url origin https://github.com/TheClairvoyantBeing/reflekt.git
-   ```
+- `.env` — your Firebase credentials
+- `node_modules/` — dependencies
+- `dist/` — production build output
+
+The `.env.example` file IS committed so others know which variables to set.
 
 ---
 

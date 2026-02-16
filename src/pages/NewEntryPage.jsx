@@ -22,7 +22,7 @@ export default function NewEntryPage({ user }) {
 
     try {
       const { error } = await createEntry(
-        user.id,
+        user.uid,
         title.trim() || 'Untitled Entry',
         content.trim()
       )
@@ -41,7 +41,7 @@ export default function NewEntryPage({ user }) {
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0
 
   return (
-    <div className="new-entry-page">
+    <div className="new-entry-page fade-in">
       <header className="entry-header">
         <h1>New Entry</h1>
         <span className="word-count">{wordCount} words</span>

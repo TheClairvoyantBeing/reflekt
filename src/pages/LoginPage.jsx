@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import supabase from '../lib/supabase'
+import { useNavigate } from 'react-router-dom'
+import { auth } from '../lib/firebase'
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth'
 import toast from 'react-hot-toast'
 import '../styles/login.css'
 
@@ -28,18 +32,17 @@ export default function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password })
-        if (error) throw error
-        toast.success('Account created! Check your email to verify, then sign in.')
-        setIsSignUp(false)
+        await createUserWithEmailAndPassword(auth, email, password)
+        toast.success('Account created! Welcome to Reflekt.')
+        navigate('/dashboard')
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) throw error
+        await signInWithEmailAndPassword(auth, email, password)
         toast.success('Welcome back!')
         navigate('/dashboard')
       }
     } catch (error) {
-      toast.error(error.message || 'Authentication failed.')
+      const msg = getFriendlyError(error.code)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -132,4 +135,26 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+/** Map Firebase error codes to user-friendly messages */
+function getFriendlyError(code) {
+  switch (code) {
+    case 'auth/user-not-found':
+      return 'No account found with this email.'
+    case 'auth/wrong-password':
+      return 'Incorrect password.'
+    case 'auth/invalid-credential':
+      return 'Invalid email or password.'
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists.'
+    case 'auth/weak-password':
+      return 'Password is too weak. Use at least 6 characters.'
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.'
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Please try again later.'
+    default:
+      return 'Authentication failed. Please try again.'
+  }
 }
