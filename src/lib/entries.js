@@ -8,6 +8,8 @@ import {
   doc,
   query,
   where,
+  limit,
+  orderBy,
   serverTimestamp,
 } from 'firebase/firestore'
 
@@ -27,11 +29,11 @@ export async function createEntry(userId, title, content, mood = 'Calm', tags = 
   try {
     const docRef = await addDoc(collection(db, ENTRIES_COLLECTION), {
       user_id: userId,
-      title,
-      content,
+      title: title.trim(),
+      content: content.trim(),
       mood,
-      tags,
-      images, // Store images directly in document (Firestore limit 1MB, so keep small)
+      tags: Array.isArray(tags) ? tags : [],
+      images: Array.isArray(images) ? images : [], // Store images directly in document (Firestore limit 1MB)
       created_at: serverTimestamp(),
       updated_at: serverTimestamp(),
     })
@@ -42,13 +44,14 @@ export async function createEntry(userId, title, content, mood = 'Calm', tags = 
 }
 
 /**
- * Fetch all entries for the user.
+ * Fetch entries for the user with optional pagination limit.
  */
-export async function getEntries(userId) {
+export async function getEntries(userId, pageSize = 50) {
   try {
     const q = query(
       collection(db, ENTRIES_COLLECTION),
-      where('user_id', '==', userId)
+      where('user_id', '==', userId),
+      limit(pageSize)
     )
     const snapshot = await getDocs(q)
     const entries = snapshot.docs.map((d) => ({
@@ -56,7 +59,7 @@ export async function getEntries(userId) {
       ...d.data(),
       mood: d.data().mood || 'Calm',
       tags: d.data().tags || [],
-      images: d.data().images || [], // Default to empty array
+      images: d.data().images || [],
       created_at: d.data().created_at?.toDate?.()?.toISOString() || new Date().toISOString(),
       updated_at: d.data().updated_at?.toDate?.()?.toISOString() || new Date().toISOString(),
     }))
@@ -65,6 +68,20 @@ export async function getEntries(userId) {
   } catch (error) {
     return { data: [], error }
   }
+}
+
+/**
+ * Filters an array of entries by text query across title, content, and tags.
+ */
+export function filterEntries(entries, searchQuery) {
+  if (!searchQuery || !searchQuery.trim()) return entries
+  const term = searchQuery.toLowerCase().trim()
+  return entries.filter(
+    (e) =>
+      e.title?.toLowerCase().includes(term) ||
+      e.content?.toLowerCase().includes(term) ||
+      e.tags?.some((t) => t.toLowerCase().includes(term))
+  )
 }
 
 export async function deleteEntry(entryId) {
